@@ -289,7 +289,7 @@ mod tests {
             has_link: false,
         };
         memo.refresh_derived();
-        let svg = memo_share_svg(&memo, "daniel", false, &|_| String::new());
+        let svg = memo_share_svg(&memo, "MindFlow", false, &|_| String::new());
         let png = render_png(&svg, 1.0).unwrap();
         assert!(png.starts_with(&[0x89, b'P', b'N', b'G']));
         assert!(png.len() > 5000);

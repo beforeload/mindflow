@@ -3,6 +3,8 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+# Keep the build machine's home directory out of the source paths embedded in the binary.
+export RUSTFLAGS="${RUSTFLAGS:-} --remap-path-prefix=$HOME=~ --remap-path-prefix=$PWD=."
 cargo build --release
 
 VERSION=$(grep -m1 '^version' Cargo.toml | cut -d '"' -f2)
