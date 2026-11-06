@@ -1,0 +1,25 @@
+[package]
+name = "mindflow"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.104"
+chrono = "0.4.45"
+dirs = "7.0.0"
+gpui-kit = "0.9.0"
+gpui_platform = { version = "=0.3.11", package = "gpui-pre-platform", features = ["runtime_shaders"] }
+raw-window-handle = "0.6"
+regex = "1.13.1"
+resvg = { version = "0.46", default-features = false, features = ["text", "system-fonts", "memmap-fonts", "raster-images"] }
+rusqlite = { version = "0.41.1", features = ["bundled"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sha2 = "0.11.1"
+smol = "2.0.2"
+tiny_http = "0.12.0"
+ureq = { version = "3.5.1", features = ["json"] }
+uuid = { version = "1.29.0", features = ["v4"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"

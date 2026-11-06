@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Builds a release binary and produces dist/MindFlow.app, dist/MindFlow-<version>.dmg and .zip.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+cargo build --release
+
+VERSION=$(grep -m1 '^version' Cargo.toml | cut -d '"' -f2)
+ARCH=$(uname -m)
+APP=dist/MindFlow.app
+rm -rf "$APP"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+cp target/release/mindflow "$APP/Contents/MacOS/mindflow"
+cp assets/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+
+cat > "$APP/Contents/Info.plist" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key><string>MindFlow</string>
+    <key>CFBundleDisplayName</key><string>MindFlow</string>
+    <key>CFBundleIdentifier</key><string>app.mindflow.desktop</string>
+    <key>CFBundleExecutable</key><string>mindflow</string>
+    <key>CFBundleIconFile</key><string>AppIcon</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleShortVersionString</key><string>${VERSION}</string>
+    <key>CFBundleVersion</key><string>${VERSION}</string>
+    <key>LSMinimumSystemVersion</key><string>12.0</string>
+    <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
+    <key>NSHighResolutionCapable</key><true/>
+</dict>
+</plist>
+PLIST
+
+codesign --force --deep --sign - "$APP"
+
+DMG="dist/MindFlow-${VERSION}-${ARCH}.dmg"
+ZIP="dist/MindFlow-${VERSION}-${ARCH}.zip"
+STAGE=$(mktemp -d)
+cp -R "$APP" "$STAGE/"
+ln -s /Applications "$STAGE/Applications"
+rm -f "$DMG" "$ZIP"
+hdiutil create -volname "MindFlow" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null
+rm -rf "$STAGE"
+ditto -c -k --keepParent "$APP" "$ZIP"
+
+echo "Built $APP"
+echo "Built $DMG"
+echo "Built $ZIP"
