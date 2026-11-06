@@ -148,3 +148,7 @@ scripts/          打包脚本与图标生成
 ## 致谢
 
 交互和设计参考了 [flomo 浮墨笔记](https://flomoapp.com)，本项目与 flomo 官方无关。界面基于 [GPUI](https://gpui.rs) 和 [gpui-component](https://github.com/longbridge/gpui-component)。
+
+## 许可证
+
+[MIT](LICENSE)
